@@ -36,10 +36,10 @@ class GameGraphics:
         player=players[playerNr]
         tank_pos=player.getX()
         player_score=player.getScore()
-        score_board=Text(Point(tank_pos,-6),"Score: "+str(player_score) )
-        score_board.draw(self.win)
+        draw_score=Text(Point(tank_pos,-6),"Score: "+str(player_score) )
+        draw_score.draw(self.win)
 
-        return score_board
+        return draw_score
 
     def fire(self, angle, vel):
         player = self.game.getCurrentPlayer()
@@ -72,20 +72,28 @@ class GameGraphics:
             circle_Y = proj.getY()
 
             update(50)
+        
+
+        self.draw_projs[player_nr]=circle
+        
+        circle.undraw()
+        self.draw_projs[player_nr].draw(self.win)
+
+
+
 
         return proj
 
     def updateScore(self,playerNr):
+        players=self.game.getPlayers()
+        player=players[playerNr]
+
+        tank_pos=player.getX()
+        player_score=player.getScore()
         
         self.draw_scores[playerNr].undraw()
-        self.drawScore(playerNr)
-
-
-
-
-
-
-
+        self.draw_scores[playerNr]=Text(Point(tank_pos,-6),"Score: "+str(player_score) )
+        self.draw_scores[playerNr].draw(self.win)
         pass
 
     def play(self):
@@ -111,7 +119,8 @@ class GameGraphics:
             if distance == 0.0:
                 player.increaseScore()
                 self.explode()
-                self.updateScore(self.game.getCurrentPlayerNumber())
+                playerNr=self.game.getCurrentPlayerNumber()
+                self.updateScore(playerNr)
                 self.game.newRound()
 
             self.game.nextPlayer()
@@ -126,7 +135,7 @@ class GameGraphics:
         dead_player_pos=dead_player.getX()
         explotion_size=ball_size
         while(explotion_size<(3*ball_size)):
-            explotion=Circle(Point(dead_player_pos,10), explotion_size)
+            explotion=Circle(Point(dead_player_pos,5), explotion_size)
             explotion.setFill(color)
             explotion_size=explotion_size*1.05
             explotion.draw(self.win)
